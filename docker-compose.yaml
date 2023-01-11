@@ -19,10 +19,12 @@ services:
     networks:
       - loki
 
-  # promtail:
-  #   image: grafana/promtail:2.3.0
-  #   volumes:
-  #     - /var/log:/var/log
-  #   command: -config.file=/etc/promtail/config.yml
-  #   networks:
-  #     - loki
+  promtail:
+    image: grafana/promtail:2.3.0
+    volumes:
+      - "/var/log:/var/log"
+      - "./promtail/promtail-config.yaml:/etc/promtail/config.yml"
+      - "./tmp:/tmp"
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      - loki

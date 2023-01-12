@@ -12,19 +12,35 @@ services:
         - loki
 
   loki:
-    image: grafana/loki:2.3.0
+    image: grafana/loki:2.7.0
     ports:
       - "3100:3100"
+    volumes:
+      - ./loki/loki-config.yaml:/etc/loki/local-config.yaml
     command: -config.file=/etc/loki/local-config.yaml
     networks:
       - loki
 
   promtail:
-    image: grafana/promtail:2.3.0
+    image: grafana/promtail:2.7.0
+    ports:
+      - 9080:9080
     volumes:
-      - "/var/log:/var/log"
-      - "./promtail/promtail-config.yaml:/etc/promtail/config.yml"
-      - "./tmp:/tmp"
+      - ./promtail/promtail-config.yaml:/etc/promtail/config.yml
+      - ./logs_system:/var/log
+      - ./logs_s3:/s3/logs
+      - ./tmp:/tmp
     command: -config.file=/etc/promtail/config.yml
     networks:
       - loki
+
+  # logstash:
+  #   image: grafana/logstash-output-loki
+  #   ports:
+  #   - 9200:9200
+  #   command: logstash -f /etc/logstash/conf.d/logstash.conf
+  #   volumes:
+  #     - ./logstash/config.conf:/etc/logstash/conf.d
+  #     - ./logs_s3:/s3/logs
+  #   environment:
+  #     LS_JAVA_OPTS: "-Xmx256m -Xms256m"

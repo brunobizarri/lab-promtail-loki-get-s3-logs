@@ -1,1 +1,3 @@
-logs/*
+logs_s3/*
+logs_system/*
+tmp/*
